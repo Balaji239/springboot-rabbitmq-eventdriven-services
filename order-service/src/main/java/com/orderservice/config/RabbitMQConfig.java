@@ -12,18 +12,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.queue.name}")
-    private String queue;
+    @Value("${rabbitmq.queue.order.name}")
+    private String orderQueue;
+
+    @Value("${rabbitmq.queue.email.name}")
+    private String emailQueue;
 
     @Value("${rabbitmq.exchange.name}")
     private String exchange;
 
-    @Value("${rabbitmq.routing-key}")
-    private String routingKey;
+    @Value("${rabbitmq.order.routing-key}")
+    private String orderRoutingKey;
+
+    @Value("${rabbitmq.email.routing-key}")
+    private String emailRoutingKey;
 
     @Bean
     public Queue queue(){
-        return new Queue(queue);
+        return new Queue(orderQueue);
+    }
+
+    @Bean
+    public Queue emailQueue(){
+        return new Queue(emailQueue);
     }
 
     @Bean
@@ -33,7 +44,12 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding binding(){
-        return BindingBuilder.bind(queue()).to(exchange()).with(routingKey);
+        return BindingBuilder.bind(queue()).to(exchange()).with(orderRoutingKey);
+    }
+
+    @Bean
+    public Binding emailBinding(){
+        return BindingBuilder.bind(emailQueue()).to(exchange()).with(emailRoutingKey);
     }
 
     @Bean
